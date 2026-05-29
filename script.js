@@ -15,7 +15,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 // Formulário -> envia para WhatsApp
 const form = document.getElementById('leadForm');
-const WHATSAPP_NUMBER = '5500000000000'; // substituir pelo número real (DDI + DDD + número)
+const WHATSAPP_NUMBER = '553185178147'; // (31) 8517-8147 — DDI 55 + DDD 31 + número
 
 form?.addEventListener('submit', (e) => {
   e.preventDefault();
