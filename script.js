@@ -4,10 +4,10 @@ const nav = document.getElementById('nav');
 
 navToggle?.addEventListener('click', () => {
   nav.classList.toggle('open');
-});
+}, { passive: true });
 
 nav?.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => nav.classList.remove('open'));
+  link.addEventListener('click', () => nav.classList.remove('open'), { passive: true });
 });
 
 // Ano automático no footer
@@ -39,20 +39,37 @@ form?.addEventListener('submit', (e) => {
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${texto}`, '_blank');
 });
 
-// Reveal on scroll
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+// Lazy-load do Google Maps — só carrega quando o usuário interage ou rola até perto
+const mapCard = document.getElementById('mapCard');
+const mapBtn = document.getElementById('mapLoad');
 
-document.querySelectorAll('.service-card, .testimonial, .diff-card').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(20px)';
-  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-  observer.observe(el);
-});
+const loadMap = () => {
+  if (!mapCard || mapCard.dataset.loaded) return;
+  mapCard.dataset.loaded = '1';
+  const iframe = document.createElement('iframe');
+  iframe.src = 'https://www.google.com/maps?q=Sarzedo,+MG&output=embed';
+  iframe.width = '100%';
+  iframe.height = '100%';
+  iframe.loading = 'lazy';
+  iframe.referrerPolicy = 'no-referrer-when-downgrade';
+  iframe.allowFullscreen = true;
+  iframe.title = 'Localização Cão Peão - Centro de Sarzedo';
+  iframe.style.border = '0';
+  mapCard.replaceChildren(iframe);
+};
+
+mapBtn?.addEventListener('click', loadMap, { passive: true });
+
+if ('IntersectionObserver' in window && mapCard) {
+  const mapObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      // Carrega quando estiver perto da viewport, no ocioso do browser
+      const fn = () => loadMap();
+      ('requestIdleCallback' in window)
+        ? requestIdleCallback(fn, { timeout: 2000 })
+        : setTimeout(fn, 200);
+      mapObserver.disconnect();
+    }
+  }, { rootMargin: '300px' });
+  mapObserver.observe(mapCard);
+}
