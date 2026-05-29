@@ -1,0 +1,18 @@
+# Robots.txt - Cão Peão Clínica Veterinária
+# https://caopeao.com.br
+
+User-agent: *
+Allow: /
+
+# Bloquear bots indesejados (opcional)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap
+Sitemap: https://caopeao.com.br/sitemap.xml
